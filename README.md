@@ -5,4 +5,4 @@
 ## Needed
 - `c++23`
 - `cmake`
-- `hate for yourself`
+- `hate for self`

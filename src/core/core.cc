@@ -2,9 +2,9 @@
 
 #include <print>
 
-Core::WindowManager Core::WINm{};
-
-Core::VulkanManager Core::VLKm{};
+namespace cog {
+CoreWindow Core::WIN{};
+CoreVulkan Core::VLK{};
 
 Core::Core() {
     std::printf("Core Create.\n");
@@ -12,3 +12,5 @@ Core::Core() {
 Core::~Core() {
     std::printf("Core Destroy.\n");
 }
+};
+

@@ -2,7 +2,7 @@
 
 #include <print>
 
-static const Core core{};
+static const cog::Core core{};
 
 int main(int argc, char **argv) {
     

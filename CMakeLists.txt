@@ -54,6 +54,8 @@ project(
 add_library(
     ${CORE_NAME}
     src/core/core.cc
+    src/core/coreWindow.cc
+    src/core/coreVulkan.cc
 )
 target_include_directories(
     ${CORE_NAME} PUBLIC

@@ -16,6 +16,9 @@ public:
     Core& operator=(Core&&) = delete;
     Core(Core&&) = delete;
 
+    friend class CoreWindow;
+    friend class CoreVulkan;
+
 public:
     static CoreWindow WIN;
     static CoreVulkan VLK;

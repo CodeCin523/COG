@@ -5,6 +5,13 @@ namespace cog {
 
     }
     CoreVulkan::~CoreVulkan() {
+
+    }
+
+    bool CoreVulkan::Init() {
+
+    }
+    bool CoreVulkan::Exit() {
         
     }
 };

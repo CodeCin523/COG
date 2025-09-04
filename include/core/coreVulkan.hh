@@ -15,7 +15,18 @@ public:
     CoreVulkan& operator=(CoreVulkan&&) = delete;
     CoreVulkan(CoreVulkan&&) = delete;
 
+    friend class Core;
+    friend class CoreWindow;
+
+// private:
+//     bool InitInstance();
+//     bool InitPhyDevice();
+//     bool InitLogDevice();
+
 public:
+    bool Init();
+    bool Exit();
+
     enum commitType { // Guaranteed VkQueueFlagBits 
         COMMIT_TYPE_PRESENT  = 0, // Graphics + Compute + Transfer
         COMMIT_TYPE_GRAPHICS = 1, // Graphics + Compute + Transfer

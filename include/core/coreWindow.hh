@@ -17,7 +17,15 @@ public:
     CoreWindow& operator=(CoreWindow&&) = delete;
     CoreWindow(CoreWindow&&) = delete;
 
+    friend class Core;
+    friend class CoreVulkan;
+
+protected:
+    SDL_Window *sdlWindow;
+
 public:
+    bool Init();
+    bool Exit();
 };
 };
 

@@ -13,4 +13,10 @@
 
 #define GBL_STR(s) #s
 
+#ifndef NDEBUG
+#define GBL_DEBUG 1
+#else
+#define GBL_DEBUG 0
+#endif
+
 #endif

@@ -5,6 +5,8 @@
 #include <SDL2/SDL_vulkan.h>
 #include <SDL2/SDL.h>
 
+#include <vector>
+
 namespace cog {
 class CoreWindow {
 public:
@@ -21,7 +23,9 @@ public:
     friend class CoreVulkan;
 
 protected:
-    SDL_Window *sdlWindow;
+    SDL_Window *sdl_window;
+
+    std::vector<const char *> GetVulkanExtensions();
 
 public:
     bool Init();

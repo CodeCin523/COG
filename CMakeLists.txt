@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.3)
 
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_GENERATOR_PLATFORM x64)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_STATIC_LIBRARY_PREFIX "")
 
@@ -22,11 +23,18 @@ configure_file(
 )
 
 
+# set(_Vulkan_hint_executable_search_paths    # Supposed to help finding x64
+#   "$ENV{VULKAN_SDK}/Bin"
+# )
+# set(_Vulkan_hint_library_search_paths       # Supposed to help finding x64 
+#   "$ENV{VULKAN_SDK}/Lib"
+#   "$ENV{VULKAN_SDK}/Bin"
+# )
 find_package(Vulkan QUIET)
 if(Vulkan_FOUND)
     message(STATUS "Vulkan found: ${Vulkan_INCLUDE_DIRS}.")
     set(Vulkan_DIRS ${Vulkan_INCLUDE_DIRS})
-    set(Vulkan_LIBS Vulkan::Vulkan)
+    set(Vulkan_LIBS ${Vulkan_LIBRARIES})
 else()
     message(WARNING, "Vulkan not found. Using manual includes.")
     set(Vulkan_DIRS "C:/VulkanSDK/1.3.268.0/Include")

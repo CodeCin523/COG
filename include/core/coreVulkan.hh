@@ -18,10 +18,16 @@ public:
     friend class Core;
     friend class CoreWindow;
 
-// private:
-//     bool InitInstance();
-//     bool InitPhyDevice();
-//     bool InitLogDevice();
+protected:
+    VkInstance vk_inst;
+    VkDebugUtilsMessengerEXT vk_debugMessenger;
+
+    VkSurfaceKHR vk_surface;
+
+    VkPhysicalDevice vk_phy_device;
+    VkDevice vk_log_device;
+
+    VkQueue vk_queue;
 
 public:
     bool Init();

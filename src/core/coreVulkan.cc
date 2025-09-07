@@ -2,16 +2,30 @@
 #include <core/core.hh>
 #include <gbl.hh>
 
+#include <print>
 #include <vector>
 
 namespace Vk {
     static inline void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& _info) {
+        static const auto fUserCallback =  [](
+            VkDebugUtilsMessageSeverityFlagBitsEXT       messageSeverity,
+            VkDebugUtilsMessageTypeFlagsEXT              messageTypes,
+            const VkDebugUtilsMessengerCallbackDataEXT*  pCallbackData,
+            void*                                        pUserData
+        ) -> VkBool32 {
+            std::print("[Vulkan] {}: {}\n",
+                (pCallbackData && pCallbackData->pMessageIdName) ? pCallbackData->pMessageIdName : "UnknownID",
+                (pCallbackData && pCallbackData->pMessage) ? pCallbackData->pMessage : "No message"
+            );
+            return VK_FALSE;
+        };
+
         _info = {
             .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
             // .pNext = nullptr,
             .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
             .messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
-            .pfnUserCallback = nullptr //VlkDebugCallback,
+            .pfnUserCallback = fUserCallback,
             // .pUserData = nullptr
         };
     }
@@ -112,7 +126,7 @@ namespace cog {
 
             const auto pickFunc = [phy_devices]() -> std::uint32_t {
                 // SCORE
-                std::vector<int> phy_scores;
+                std::vector<int> phy_scores(phy_devices.size());
 
                 for(int i = 0; i < phy_devices.size(); ++i) {
                     auto& device = phy_devices[i];

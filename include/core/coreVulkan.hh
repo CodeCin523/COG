@@ -1,6 +1,8 @@
 #ifndef __CORE_VULKAN_HH__
 #define __CORE_VULKAN_HH__
 
+#include <vector>
+
 #include <vulkan/vulkan.h>
 
 namespace cog {
@@ -29,6 +31,21 @@ protected:
 
     VkQueue vk_queue;
 
+    VkSwapchainKHR vk_swapchain;
+
+    // SWAPCHAIN STUFF
+    struct SwapChainSupportDetails {
+    public:
+        VkSurfaceCapabilitiesKHR capabilities;
+        std::vector<VkSurfaceFormatKHR> formats;
+        std::vector<VkPresentModeKHR> presentModes;
+    };
+
+    SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+    VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
 public:
     bool Init();
     bool Exit();
@@ -40,8 +57,9 @@ public:
         COMMIT_TYPE_TRANSFER = 3  // Transfer
     };
     using commitFunc = const void (*)(VkCommandBuffer cmd);
+    using callbackFunc = const void (*)();
 
-    void Commit(const commitType _type, const commitFunc _func);
+    void Commit(const commitType _type, const commitFunc _func, const callbackFunc _callback);
 };
 };
 

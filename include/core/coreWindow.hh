@@ -26,6 +26,7 @@ protected:
     SDL_Window *sdl_window;
 
     std::vector<const char *> GetVulkanExtensions();
+    std::pair<int, int> GetVulkanDrawableSize();
 
 public:
     bool Init();

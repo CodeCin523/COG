@@ -2,6 +2,7 @@
 #include <core/core.hh>
 #include <gbl.hh>
 
+#include <algorithm>
 #include <print>
 #include <vector>
 
@@ -61,6 +62,63 @@ namespace cog {
     CoreVulkan::CoreVulkan()  { }
     CoreVulkan::~CoreVulkan() { }
 
+    // SWAPCHAIN STUFF
+    CoreVulkan::SwapChainSupportDetails CoreVulkan::querySwapChainSupport(VkPhysicalDevice device) {
+        SwapChainSupportDetails details;
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, vk_surface, &details.capabilities);
+
+        uint32_t formatCount;
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, vk_surface, &formatCount, nullptr);
+        if (formatCount != 0) {
+            details.formats.resize(formatCount);
+            vkGetPhysicalDeviceSurfaceFormatsKHR(device, vk_surface, &formatCount, details.formats.data());
+        }
+
+        uint32_t presentModeCount;
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, vk_surface, &presentModeCount, nullptr);
+        if (presentModeCount != 0) {
+            details.presentModes.resize(presentModeCount);
+            vkGetPhysicalDeviceSurfacePresentModesKHR(device, vk_surface, &presentModeCount, details.presentModes.data());
+        }
+
+        return details;
+    }
+    VkSurfaceFormatKHR CoreVulkan::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {
+        for (const auto& availableFormat : availableFormats) {
+            if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+                return availableFormat;
+            }
+        }
+        return availableFormats[0];
+    }
+    VkPresentModeKHR CoreVulkan::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) {
+        for (const auto& availablePresentMode : availablePresentModes) {
+            if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+                return availablePresentMode;
+            }
+        }
+
+        return VK_PRESENT_MODE_FIFO_KHR;
+    }
+    VkExtent2D CoreVulkan::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
+        if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+            return capabilities.currentExtent;
+        } else {
+            auto size = Core::WIN.GetVulkanDrawableSize();
+            int width = size.first, height = size.second;
+
+            VkExtent2D actualExtent = {
+                static_cast<uint32_t>(width),
+                static_cast<uint32_t>(height)
+            };
+
+            actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+            actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+
+            return actualExtent;
+        }
+    }
+
     bool CoreVulkan::Init() {
         if(GBL_DEBUG)
             if(!CheckValidationLayerSupport())
@@ -116,6 +174,10 @@ namespace cog {
             if(func(vk_inst, &createInfo, nullptr, &vk_debugMessenger) != VK_SUCCESS)
                 return false;
         }
+        
+        // SURFACE
+        SDL_Vulkan_CreateSurface(Core::WIN.sdl_window, vk_inst, &vk_surface);
+
         {   // PHYSICAL DEVICE
             std::uint32_t deviceCount = 0;
             vkEnumeratePhysicalDevices(vk_inst, &deviceCount, nullptr);
@@ -160,9 +222,6 @@ namespace cog {
 
             vk_phy_device = phy_devices[index];
         }
-
-        // SURFACE
-        SDL_Vulkan_CreateSurface(Core::WIN.sdl_window, vk_inst, &vk_surface);
 
         uint32_t queue_familyIndex = UINT32_MAX;
         VkQueueFamilyProperties queue_properties{};
@@ -223,9 +282,56 @@ namespace cog {
             vkGetDeviceQueue(vk_log_device, queue_familyIndex, 0, &vk_queue);
         }
 
+        {   // SWAPCHAIN
+            SwapChainSupportDetails swapChainSupport = querySwapChainSupport(vk_phy_device);
+
+            VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
+            VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
+            VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
+
+            std::uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
+            if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
+                imageCount = swapChainSupport.capabilities.maxImageCount;
+            }
+
+            VkSwapchainCreateInfoKHR createInfo{};
+            createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+            createInfo.surface = vk_surface;
+            createInfo.minImageCount = imageCount;
+            createInfo.imageFormat = surfaceFormat.format;
+            createInfo.imageColorSpace = surfaceFormat.colorSpace;
+            createInfo.imageExtent = extent;
+            createInfo.imageArrayLayers = 1;
+            createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+            // if (indices.graphicsFamily != indices.presentFamily) {
+            //     createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+            //     createInfo.queueFamilyIndexCount = 2;
+            //     createInfo.pQueueFamilyIndices = queueFamilyIndices;
+            // } else {
+                createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+                createInfo.queueFamilyIndexCount = 0; // Optional
+                createInfo.pQueueFamilyIndices = nullptr; // Optional
+            // }
+
+            createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+            createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+            createInfo.presentMode = presentMode;
+            createInfo.clipped = VK_TRUE;
+            createInfo.oldSwapchain = VK_NULL_HANDLE;
+
+            if (vkCreateSwapchainKHR(vk_log_device, &createInfo, nullptr, &vk_swapchain) != VK_SUCCESS)
+                return false;
+        }
+
         return true;
     }
     bool CoreVulkan::Exit() {
+        if(vk_swapchain != VK_NULL_HANDLE) {
+            vkDestroySwapchainKHR(vk_log_device, vk_swapchain, nullptr);
+            vk_swapchain = VK_NULL_HANDLE;
+        }
+
         if(vk_log_device != VK_NULL_HANDLE) {
             vkDestroyDevice(vk_log_device, nullptr);
             vk_log_device = VK_NULL_HANDLE;

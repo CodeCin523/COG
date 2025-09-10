@@ -12,6 +12,9 @@ namespace cog {
             SDL_Vulkan_GetInstanceExtensions(sdl_window, &sdlExtensionCount, extensions.data());
             return extensions;
     }
+    std::pair<int, int> CoreWindow::GetVulkanDrawableSize() {
+        return std::make_pair<int, int>(600, 400);
+    }
 
     bool CoreWindow::Init() {
         if(SDL_Init(SDL_INIT_VIDEO) != 0)

@@ -34,11 +34,8 @@ namespace Vk {
 };
 
 namespace cog {
-    static const std::vector<const char *> VK_VALIDATION_LAYERS = {
+    const std::vector<const char *> VK_VALIDATION_LAYERS {
         "VK_LAYER_KHRONOS_validation"
-    };
-    static const std::vector<const char *> VK_DEVICE_EXTENSIONS = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME
     };
 
     static bool CheckValidationLayerSupport() {
@@ -157,7 +154,7 @@ namespace cog {
                 Vk::PopulateDebugMessengerCreateInfo(debugCreateInfo);
                 inst_info.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
 
-                inst_info.enabledLayerCount = static_cast<uint32_t>(VK_VALIDATION_LAYERS.size());;
+                inst_info.enabledLayerCount = static_cast<uint32_t>(VK_VALIDATION_LAYERS.size());
                 inst_info.ppEnabledLayerNames = VK_VALIDATION_LAYERS.data();
             }
 
@@ -252,6 +249,10 @@ namespace cog {
                 return false;
         }
         {   // LOGICAL DEVICE
+            const std::vector<const char *> VK_DEVICE_EXTENSIONS { // TEMPORARY FIX SINCE MSBUILD WASN't ABLE TO SEE IT OTHERWISE!!!
+                VK_KHR_SWAPCHAIN_EXTENSION_NAME
+            };
+
             const float PRIORITIES[] = {1.0f};
             VkDeviceQueueCreateInfo queueInfo = {
                 .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,

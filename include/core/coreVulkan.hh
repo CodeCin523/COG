@@ -8,9 +8,6 @@
 namespace cog {
 class CoreVulkan {
 public:
-    CoreVulkan();
-    ~CoreVulkan();
-
     /* Disabling copy and move semantics */
     CoreVulkan& operator=(const CoreVulkan&) = delete;
     CoreVulkan(const CoreVulkan&) = delete;
@@ -21,6 +18,15 @@ public:
     friend class CoreWindow;
 
 protected:
+    // Structures.
+    struct SwapChainSupportDetails {
+    public:
+        VkSurfaceCapabilitiesKHR capabilities;
+        std::vector<VkSurfaceFormatKHR> formats;
+        std::vector<VkPresentModeKHR> presentModes;
+    };
+
+    // Variables.
     VkInstance vk_inst;
     VkDebugUtilsMessengerEXT vk_debugMessenger;
 
@@ -34,19 +40,16 @@ protected:
 
     VkSwapchainKHR vk_swapchain;
 
-    // SWAPCHAIN STUFF
-    struct SwapChainSupportDetails {
-    public:
-        VkSurfaceCapabilitiesKHR capabilities;
-        std::vector<VkSurfaceFormatKHR> formats;
-        std::vector<VkPresentModeKHR> presentModes;
-    };
-
+    // Functions.
     SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
     
+    // Initialization and constructions.
+    CoreVulkan();
+    ~CoreVulkan();
+
     bool Init(
         std::vector<const char *> vulkanDeviceExtensions
     );

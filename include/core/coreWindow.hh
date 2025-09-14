@@ -10,9 +10,6 @@
 namespace cog {
 class CoreWindow {
 public:
-    CoreWindow();
-    ~CoreWindow();
-
     /* Disabling copy and move semantics */
     CoreWindow& operator=(const CoreWindow&) = delete;
     CoreWindow(const CoreWindow&) = delete;
@@ -23,10 +20,16 @@ public:
     friend class CoreVulkan;
 
 protected:
+    // Variables.
     SDL_Window *sdl_window;
 
+    // Functions.
     std::vector<const char *> GetVulkanExtensions();
     std::pair<int, int> GetVulkanDrawableSize();
+
+    // Initialization and constructions.
+    CoreWindow();
+    ~CoreWindow();
 
     bool Init();
     bool Exit();

@@ -8,6 +8,7 @@ namespace cog {
 class Core {
 public:
     Core(
+        std::uint32_t (*vulkanPickPhysicalDevice)(std::vector<VkPhysicalDevice>),
         std::vector<const char *> vulkanDeviceExtensions
     );
     ~Core();

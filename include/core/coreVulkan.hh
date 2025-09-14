@@ -39,6 +39,9 @@ protected:
     VkQueue vk_queue;
 
     VkSwapchainKHR vk_swapchain;
+    std::vector<VkImage> vk_swapchain_images;
+    VkFormat vk_swapchain_imageFormat;
+    VkExtent2D vk_swapchain_extent;
 
     // Functions.
     SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
@@ -46,13 +49,16 @@ protected:
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
     
+    bool create_instance();
+    bool create_phyDevice();
+    bool create_logDevice(uint32_t queue_familyIndex);
+    bool create_swapchain();
+
     // Initialization and constructions.
     CoreVulkan();
     ~CoreVulkan();
 
-    bool Init(
-        std::vector<const char *> vulkanDeviceExtensions
-    );
+    bool Init();
     bool Exit();
 
 public:

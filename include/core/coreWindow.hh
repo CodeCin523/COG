@@ -28,9 +28,10 @@ protected:
     std::vector<const char *> GetVulkanExtensions();
     std::pair<int, int> GetVulkanDrawableSize();
 
-public:
     bool Init();
     bool Exit();
+
+public:
 };
 };
 

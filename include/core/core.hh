@@ -7,7 +7,9 @@
 namespace cog {
 class Core {
 public:
-    Core();
+    Core(
+        std::vector<const char *> vulkanDeviceExtensions
+    );
     ~Core();
 
     /* Disabling copy and move semantics */

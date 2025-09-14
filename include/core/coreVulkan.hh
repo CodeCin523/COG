@@ -27,6 +27,7 @@ protected:
     VkSurfaceKHR vk_surface;
 
     VkPhysicalDevice vk_phy_device;
+
     VkDevice vk_log_device;
 
     VkQueue vk_queue;
@@ -45,10 +46,13 @@ protected:
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+    
+    bool Init(
+        std::vector<const char *> vulkanDeviceExtensions
+    );
+    bool Exit();
 
 public:
-    bool Init();
-    bool Exit();
 
     enum commitType { // Guaranteed VkQueueFlagBits 
         COMMIT_TYPE_PRESENT  = 0, // Graphics + Compute + Transfer

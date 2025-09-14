@@ -116,7 +116,9 @@ namespace cog {
         }
     }
 
-    bool CoreVulkan::Init() {
+    bool CoreVulkan::Init(
+        std::vector<const char *> vulkanDeviceExtensions
+    ) {
         if(GBL_DEBUG)
             if(!CheckValidationLayerSupport())
                 return false;
@@ -249,10 +251,6 @@ namespace cog {
                 return false;
         }
         {   // LOGICAL DEVICE
-            const std::vector<const char *> VK_DEVICE_EXTENSIONS { // TEMPORARY FIX SINCE MSBUILD WASN't ABLE TO SEE IT OTHERWISE!!!
-                VK_KHR_SWAPCHAIN_EXTENSION_NAME
-            };
-
             const float PRIORITIES[] = {1.0f};
             VkDeviceQueueCreateInfo queueInfo = {
                 .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
@@ -272,8 +270,8 @@ namespace cog {
                 .pQueueCreateInfos = &queueInfo,
                 .enabledLayerCount = 0,
                 .ppEnabledLayerNames = nullptr,
-                .enabledExtensionCount = (uint32_t) VK_DEVICE_EXTENSIONS.size(),
-                .ppEnabledExtensionNames = VK_DEVICE_EXTENSIONS.data(),
+                .enabledExtensionCount = (uint32_t) vulkanDeviceExtensions.size(),
+                .ppEnabledExtensionNames = vulkanDeviceExtensions.data(),
                 .pEnabledFeatures = &deviceFeatures
             };
 

@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.28)
 
-
+# SET VARIABLES
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_GENERATOR_PLATFORM x64)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_STATIC_LIBRARY_PREFIX "")
 
@@ -23,36 +22,36 @@ configure_file(
 )
 
 
-# set(_Vulkan_hint_executable_search_paths    # Supposed to help finding x64
-#   "$ENV{VULKAN_SDK}/Bin"
-# )
-# set(_Vulkan_hint_library_search_paths       # Supposed to help finding x64 
-#   "$ENV{VULKAN_SDK}/Lib"
-#   "$ENV{VULKAN_SDK}/Bin"
-# )
+# LOAD LIBRARIES
 find_package(Vulkan QUIET)
-if(Vulkan_FOUND)
+if(NOT Vulkan)
+    message(WARNING "Vulkan not found. Using \"paths.cmake\".")
+else()
     message(STATUS "Vulkan found: ${Vulkan_INCLUDE_DIRS}.")
     set(Vulkan_DIRS ${Vulkan_INCLUDE_DIRS})
     set(Vulkan_LIBS ${Vulkan_LIBRARIES})
-else()
-    message(WARNING, "Vulkan not found. Using manual includes.")
-    set(Vulkan_DIRS "C:/VulkanSDK/1.3.268.0/Include")
-    set(Vulkan_LIBS "C:/VulkanSDK/1.3.268.0/Lib/vulkan-1.lib")
 endif()
 
 find_package(SDL2 QUIET)
-if(SDL2_FOUND)
+if(NOT SDL2)
+    message(WARNING "SDL2 not found. Using \"paths.cmake\".")
+else()
     message(STATUS "SDL2 found: ${SDL2_INCLUDE_DIRS}.")
     set(SDL2_DIRS ${SDL2_INCLUDE_DIRS})
     set(SDL2_LIBS SDL2::SDL2)
-else()
-    message(WARNING "SDL2 not found. Using manual includes.")
-    set(SDL2_DIRS "C:/VulkanSDK/1.3.268.0/Include")
-    set(SDL2_LIBS "C:/VulkanSDK/1.3.268.0/Lib/SDL2.lib")
 endif()
 
+if(NOT EXISTS "./paths.cmake")
+    message(WARNING "\"paths.cmake\" not detected, a new one will be created. Insure to set the correct values.")
+    file(
+        WRITE "./paths.cmake"
+        "if(NOT Vulkan)\nset(Vulkan_DIRS \"C:/VulkanSDK/1.3.268.0/Include\")\nset(Vulkan_LIBS \"C:/VulkanSDK/1.3.268.0/Lib/vulkan-1.lib\")\nendif()\nif(NOT SDL2)\nset(SDL2_DIRS \"C:/VulkanSDK/1.3.268.0/Include\")\nset(SDL2_LIBS \"C:/VulkanSDK/1.3.268.0/Lib/SDL2.lib\")\nendif()"
+        )
+endif()
 
+include("./paths.cmake")
+
+# CREATE PROJECT
 project(
     ${PROJECT_NAME}
     VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}

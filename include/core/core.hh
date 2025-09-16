@@ -5,6 +5,7 @@
 #include "coreVulkan.hh"
 
 #include <cstdint>
+#include <string>
 
 namespace cog {
 class Core {
@@ -27,6 +28,8 @@ public:
 public:
     static CoreWindow WIN;
     static CoreVulkan VLK;
+
+    static void Log(std::string msg);
 };
 };
 

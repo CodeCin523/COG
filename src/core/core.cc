@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <stdexcept>
+#include <unistd.h>
 // #include <print> NOT SUPPORTED BY C++ 13.2.0
 
 namespace cog {
@@ -28,6 +29,10 @@ Core::~Core() {
     VLK.Exit();
     WIN.Exit();
     // std::printf("Core Destroy.\n");
+}
+
+void Core::Log(std::string msg) {
+    write(STDOUT_FILENO, msg.c_str(), msg.size());
 }
 };
 

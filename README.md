@@ -8,6 +8,7 @@
 
 ## Needed
 - `c++23`
+    - Support for `std::format()`
 - `cmake`
 - `Vulkan`
 - `SDL2`

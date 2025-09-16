@@ -41,7 +41,7 @@ else()
     set(SDL2_LIBS SDL2::SDL2)
 endif()
 
-if(NOT EXISTS "./paths.cmake")
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/paths.cmake)
     message(WARNING "\"paths.cmake\" not detected, a new one will be created. Insure to set the correct values.")
     file(
         WRITE "./paths.cmake"

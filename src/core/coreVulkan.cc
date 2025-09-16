@@ -269,7 +269,8 @@ namespace cog {
         if(GBL_DEBUG)
             if(!CheckValidationLayerSupport())
                 return false;
-        
+        Core::Log("Found Validation Layer");
+
         if(!create_instance())
             return false;
 

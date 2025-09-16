@@ -46,7 +46,7 @@ if(NOT EXISTS "./paths.cmake")
     file(
         WRITE "./paths.cmake"
         "if(NOT Vulkan)\nset(Vulkan_DIRS \"C:/VulkanSDK/1.3.268.0/Include\")\nset(Vulkan_LIBS \"C:/VulkanSDK/1.3.268.0/Lib/vulkan-1.lib\")\nendif()\nif(NOT SDL2)\nset(SDL2_DIRS \"C:/VulkanSDK/1.3.268.0/Include\")\nset(SDL2_LIBS \"C:/VulkanSDK/1.3.268.0/Lib/SDL2.lib\")\nendif()"
-        )
+    )
 endif()
 
 include("./paths.cmake")

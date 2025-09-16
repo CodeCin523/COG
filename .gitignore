@@ -1,6 +1,8 @@
 .vscode/
+.cache/
 _build/
 
 include/gbl.hh
 
+compile_commands.json
 paths.cmake

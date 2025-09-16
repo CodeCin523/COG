@@ -1,6 +1,8 @@
 #include <core/core.hh>
 
-#include <print>
+#include <exception>
+#include <stdexcept>
+// #include <print> NOT SUPPORTED BY C++ 13.2.0
 
 namespace cog {
 CoreWindow Core::WIN{};
@@ -17,15 +19,15 @@ Core::Core(
     pVkDeviceExtensionNames = &vulkanDeviceExtensions;
 
     if(!WIN.Init())
-        throw new std::exception("CoreWindow failed to init.");
+        throw new std::runtime_error("CoreWindow failed to init.");
     if(!VLK.Init())
-        throw new std::exception("CoreVulkan failed to init.");
-    std::printf("Core Create.\n");
+        throw new std::runtime_error("CoreVulkan failed to init.");
+    // std::printf("Core Create.\n");
 }
 Core::~Core() {
     VLK.Exit();
     WIN.Exit();
-    std::printf("Core Destroy.\n");
+    // std::printf("Core Destroy.\n");
 }
 };
 

@@ -4,6 +4,8 @@
 #include "coreWindow.hh"
 #include "coreVulkan.hh"
 
+#include <cstdint>
+
 namespace cog {
 class Core {
 public:

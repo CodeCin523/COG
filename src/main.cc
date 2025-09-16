@@ -1,7 +1,6 @@
 #include <core/core.hh>
 
 #include <chrono>
-#include <print>
 #include <thread>
 
 static const cog::Core core {

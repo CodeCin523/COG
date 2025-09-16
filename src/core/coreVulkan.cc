@@ -3,7 +3,8 @@
 #include <gbl.hh>
 
 #include <algorithm>
-#include <print>
+// #include <print> NOT SUPPORTED BY C++ 13.2.0
+#include <iostream>
 #include <vector>
 
 namespace Vk {
@@ -14,10 +15,15 @@ namespace Vk {
             const VkDebugUtilsMessengerCallbackDataEXT*  pCallbackData,
             void*                                        pUserData
         ) -> VkBool32 {
-            std::print("[Vulkan] {}: {}\n",
-                (pCallbackData && pCallbackData->pMessageIdName) ? pCallbackData->pMessageIdName : "UnknownID",
-                (pCallbackData && pCallbackData->pMessage) ? pCallbackData->pMessage : "No message"
-            );
+            // std::print("[Vulkan] {}: {}\n",
+            //     (pCallbackData && pCallbackData->pMessageIdName) ? pCallbackData->pMessageIdName : "UnknownID",
+            //     (pCallbackData && pCallbackData->pMessage) ? pCallbackData->pMessage : "No message"
+            // );
+            std::cout <<
+                "[Vulkan] " <<
+                ((pCallbackData && pCallbackData->pMessageIdName) ? pCallbackData->pMessageIdName : "UnknownID") <<
+                ((pCallbackData && pCallbackData->pMessage) ? pCallbackData->pMessage : "No message") <<
+                "\n";
             return VK_FALSE;
         };
 
